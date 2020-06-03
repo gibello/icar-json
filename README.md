@@ -6,7 +6,7 @@ Fast enough to parse a 50 Mo JSON file within 3 seconds !
 
 ## Build with maven
 
-``̀ 
+```
 mvn clean install
 ```
 

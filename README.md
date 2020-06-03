@@ -1,6 +1,6 @@
 # Icar fast JSON push parser (SAX-like)
 
-Designed in a minimalistic way (as little code as possible), with no external dependency.
+Designed in a minimalistic way (as little code as possible), with no external dependency, and released under Creative Commons Zero (CC0) "public domain" license.
 
 Fast enough to parse a 50 Mo JSON file within 3 seconds !
 
@@ -70,3 +70,13 @@ Example:
 parser.parse(new BufferedInputStream(new FileInputStream(jsonFile)), handler);
 // Code above is 10 times faster than: parser.parse(new FileInputStream(jsonFile), handler);
 ```
+
+## Embed the code in your project ?
+
+Why not, as an alternative to a dependency ?
+
+One can just pick the com.gibello.icar.json.parser package (in src/main/java/com/gibello/icar/json/parser).
+It is just 3 files, less than 300 lines of code, and is enough.
+
+Feel free to rename, move to your own package, the CC0 license allows anything you like :)
+

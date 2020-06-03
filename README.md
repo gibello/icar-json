@@ -60,3 +60,13 @@ public class MyHandler extends DefaultHandler {
 
 ```
 
+## Tip for faster parsing of JSON files
+
+Using a BufferedInputStream is almost 10 times faster than a simple FileInputStream.
+
+Example:
+
+```
+parser.parse(new BufferedInputStream(new FileInputStream(jsonFile)), handler);
+// Code above is 10 times faster than: parser.parse(new FileInputStream(jsonFile), handler);
+```

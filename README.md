@@ -7,7 +7,7 @@ Fast enough to parse a 50 Mo JSON file within 3 seconds !
 ## Build with maven
 
 ```
-mvn clean install
+$ mvn clean install
 ```
 
 ## Quick start: pretty-print JSON
@@ -46,15 +46,16 @@ public class MyHandler extends DefaultHandler {
   public void simpleValue(String val) throws Exception {
     System.out.println("Got value: " + val);
   }
-}
 
-/**
- * Main program: parse a JSON String!
- */
-public static void main(String args[]) throws Exception {
-  JsonParser parser = new JsonParser();
-  String json = "{ \"productInfo\": \"Icar JSON Parser\" }";
-  parser.parse(new ByteArrayInputStream(json.getBytes()), new MyHandler());
+  /**
+   * Main program: parse a JSON String!
+   */
+  public static void main(String args[]) throws Exception {
+    JsonParser parser = new JsonParser();
+    String json = "{ \"productInfo\": \"Icar JSON Parser\" }";
+    parser.parse(new ByteArrayInputStream(json.getBytes()), new MyHandler());
+  }
+
 }
 
 ```

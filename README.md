@@ -2,7 +2,7 @@
 
 Designed in a minimalistic way (as little code as possible), with no external dependency, and released under Creative Commons Zero (CC0) "public domain" license.
 
-Fast enough to parse a 50 Mo JSON file within 3 seconds !
+Fast enough to parse a 50 Mo JSON file in about 3 seconds !
 
 ## Build with maven
 

@@ -2,6 +2,7 @@ package com.gibello.icar.json.parser;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PushbackInputStream;
 
 /**
  * JSON push parser (looks like XML sax parsing).
@@ -21,15 +22,15 @@ public class JsonParser {
 	private static final int VALUE = 4;
 	private static final int KEY = 8;
 
-	public void parse(InputStream in, EventHandler handler) throws Exception {
+	public void parse(InputStream input, EventHandler handler) throws Exception {
 		int expect = OBJECT | ARRAY;
 		int status = 0, mainIndex = 0;;
 		boolean firstval = true;
 		int c = 0;
-		int prevc = 0;
 
 		handler.startParsing(this);
 
+		PushbackInputStream in = new PushbackInputStream(input);
 		while((c = in.read()) > 0) {
 			mainIndex++;
 
@@ -129,17 +130,28 @@ public class JsonParser {
 			case '\n' :
 				// ignore
 				break;
+			case '\\' :
+				if((expect & VALUE) != 0) {
+					int next = in.read();
+					if(next == '\\') {
+						currentValue(c); currentValue(c);
+					} else if(next == '\"') {
+						if(this.quoted) currentValue(c);
+					} else {
+						in.unread(next);
+						currentValue(c);
+					}
+				} else currentValue(c);
+				break;
 			case '\"':
-				if((prevc == '\\' && this.quoted)) currentValue(c);
-				else this.quoted = !this.quoted;
+				if((expect & VALUE) != 0) this.quoted = !this.quoted;
 				break;
 			default :
 				if((expect & (VALUE | KEY)) == 0) throw new IOException("Unexpected character: " + (char)c + " at index " + mainIndex);
 				currentValue(c);
 				break;
 			}
-			
-			prevc = c;
+
 		}
 		
 		handler.endParsing();

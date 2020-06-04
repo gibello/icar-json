@@ -13,7 +13,7 @@ $ mvn clean install
 ## Quick start: pretty-print JSON
 
 ```
-$ java -jar target/icar.json-0.0.1-SNAPSHOT.jar any-json-file.json
+$ java -jar target/icar.json-1.0.0-SNAPSHOT.jar any-json-file.json
 ```
  
 ## How to develop your own parser

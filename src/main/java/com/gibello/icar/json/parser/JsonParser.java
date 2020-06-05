@@ -13,8 +13,6 @@ public class JsonParser {
 	StringBuffer currentValue = new StringBuffer();
 	int level = 0;
 	int stack[] = new int[512];
-	boolean record;
-	StringBuilder recordBuffer = new StringBuilder();
 	boolean quoted = false;
 	
 	private static final int OBJECT = 1;
@@ -24,7 +22,7 @@ public class JsonParser {
 
 	public void parse(InputStream input, EventHandler handler) throws Exception {
 		int expect = OBJECT | ARRAY;
-		int status = 0, mainIndex = 0;;
+		int status = 0, mainIndex = 0, lineNo = 1;
 		boolean firstval = true;
 		int c = 0;
 
@@ -34,7 +32,6 @@ public class JsonParser {
 		while((c = in.read()) > 0) {
 			mainIndex++;
 
-			if(record) this.recordBuffer.append((char)c);
 			switch((char)c) {
 			case '{' :
 				if(this.quoted) {
@@ -42,7 +39,7 @@ public class JsonParser {
 					break;
 				}
 				firstval = true;
-				if((expect & OBJECT) == 0) throw new IOException("Unexpected { at index " + mainIndex);
+				if((expect & OBJECT) == 0) throw new IOException("Unexpected { at index " + mainIndex + " line " + lineNo);
 				handler.startObject();
 
 				status = pushStatus(OBJECT);
@@ -70,7 +67,7 @@ public class JsonParser {
 					break;
 				}
 				firstval = true;
-				if((expect & ARRAY) == 0) throw new IOException("Unexpected [ at index " + mainIndex);
+				if((expect & ARRAY) == 0) throw new IOException("Unexpected [ at index " + mainIndex  + " line " + lineNo);
 				handler.startArray();
 				
 				status = pushStatus(ARRAY);
@@ -99,8 +96,8 @@ public class JsonParser {
 					currentValue(c);
 					break;
 				}
-				if(firstval && this.currentValue.length() <= 0) throw new IOException("Unexpected comma at index " + mainIndex);
-				else if((expect & KEY) != 0 && (firstval || this.currentValue.length()>0)) throw new IOException("Unexpected comma at index " + mainIndex);
+				if(firstval && this.currentValue.length() <= 0) throw new IOException("Unexpected comma at index " + mainIndex + " line " + lineNo);
+				else if((expect & KEY) != 0 && (firstval || this.currentValue.length()>0)) throw new IOException("Unexpected comma at index " + mainIndex + " line " + lineNo);
 				else if((expect & VALUE) != 0) {
 					if(! this.quoted) handler.simpleValue(stripQuotes(this.currentValue.toString()));
 				}
@@ -112,7 +109,7 @@ public class JsonParser {
 				firstval = false;
 				break;
 			case ':' :
-				if(((expect & KEY) == 0 && !this.quoted) || this.currentValue.length() <= 0) throw new IOException("Unexpected colon at index " + mainIndex);
+				if(((expect & KEY) == 0 && !this.quoted) || this.currentValue.length() <= 0) throw new IOException("Unexpected colon at index " + mainIndex + " line " + lineNo);
 				if(! this.quoted) {
 					handler.key(stripQuotes(this.currentValue.toString()));
 					expect = VALUE | OBJECT | ARRAY;
@@ -128,17 +125,20 @@ public class JsonParser {
 				break;
 			case '\r' :
 			case '\n' :
+				if(c == '\n') lineNo++;
 				// ignore
 				break;
 			case '\\' :
 				if((expect & VALUE) != 0) {
 					int next = in.read();
+					mainIndex++; // 1 additional char read
 					if(next == '\\') {
 						currentValue(c); currentValue(c);
 					} else if(next == '\"') {
 						if(this.quoted) currentValue(c);
 					} else {
 						in.unread(next);
+						mainIndex--; // 1 char pushed back
 						currentValue(c);
 					}
 				} else currentValue(c);
@@ -147,27 +147,14 @@ public class JsonParser {
 				if((expect & VALUE) != 0) this.quoted = !this.quoted;
 				break;
 			default :
-				if((expect & (VALUE | KEY)) == 0) throw new IOException("Unexpected character: " + (char)c + " at index " + mainIndex);
+				if((expect & (VALUE | KEY)) == 0) throw new IOException("Unexpected character: " + (char)c + " at index " + mainIndex + " line " + lineNo);
 				currentValue(c);
 				break;
 			}
-
 		}
 		
 		handler.endParsing();
 	}
-	
-	public void startRecording(String prefix) {
-		this.recordBuffer.setLength(0);
-		if(prefix != null) this.recordBuffer.append(prefix);
-		this.record = true;
-	}
-	public boolean isRecording() { return this.record; }
-	public String endRecording() {
-		this.record = false;
-		return this.recordBuffer.toString();
-	}
-	
 		
 	private int pushStatus(int status) throws IOException {
 		if(this.level >= this.stack.length-1) throw new IOException("Stack overflow");
@@ -193,5 +180,4 @@ public class JsonParser {
 		if(val.endsWith("\"")) val = val.substring(0, val.length()-1);
 		return val;
     }
-
 }

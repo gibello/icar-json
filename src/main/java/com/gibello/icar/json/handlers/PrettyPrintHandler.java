@@ -31,10 +31,10 @@ public class PrettyPrintHandler implements EventHandler {
 
 	@Override
 	public void startObject() throws Exception {
-		if(this.level > 0) print(0, (firstVal ? "" : ",\n")); //+ "\n");
-		print(this.level++, "{\n");
+		if(this.level > 0) print(0, (firstVal ? "" : ",\n"));
+		print((firstVal ? 0 : this.level), "{\n");
+		this.level++;
 		this.firstKey = true;
-		this.firstVal = false;
 	}
 
 	@Override
@@ -56,7 +56,10 @@ public class PrettyPrintHandler implements EventHandler {
 
 	@Override
 	public void simpleValue(String value) throws Exception {
-		if(this.firstVal) print(0, "\"" + value + "\"");
+		if(this.firstVal) {
+			print(0, "\"" + value + "\"");
+			this.firstVal = false;
+		}
 		else {
 			print(0, ",\n");
 			print(this.level, "\"" + value + "\"");
@@ -67,7 +70,7 @@ public class PrettyPrintHandler implements EventHandler {
 	public void startArray() throws Exception {
 		print(0, "\n");
 		print(++this.level, "[\n");
-		++this.level;
+		print(++this.level, "");
 		this.firstVal = true;
 	}
 

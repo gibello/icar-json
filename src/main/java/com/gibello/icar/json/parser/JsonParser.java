@@ -54,6 +54,7 @@ public class JsonParser {
 				if((expect & VALUE) != 0) {
 					handler.simpleValue(stripQuotes(this.currentValue.toString()));
 					this.currentValue = new StringBuffer();
+					expect &= ~VALUE;
 				}
 				handler.endObject();
 				
@@ -119,7 +120,7 @@ public class JsonParser {
 			case ' ' :
 			case '\t' :
 				if((expect & VALUE) != 0 && this.currentValue.length() > 0) {
-					currentValue(c);
+					if(this.quoted) currentValue(c);
 				}
 				// else ignore
 				break;
@@ -135,7 +136,10 @@ public class JsonParser {
 					if(next == '\\') {
 						currentValue(c); currentValue(c);
 					} else if(next == '\"') {
-						if(this.quoted) currentValue(c);
+						if(this.quoted) {
+							currentValue(c);
+							currentValue(next);
+						}
 					} else {
 						in.unread(next);
 						mainIndex--; // 1 char pushed back
@@ -155,7 +159,7 @@ public class JsonParser {
 		
 		handler.endParsing();
 	}
-		
+
 	private int pushStatus(int status) throws IOException {
 		if(this.level >= this.stack.length-1) throw new IOException("Stack overflow");
 		this.stack[++ this.level] = status;
@@ -175,9 +179,9 @@ public class JsonParser {
 	}
 
 	private String stripQuotes(String val) {
-    	val = val.trim();
+    	//val = val.trim();
     	if(val.startsWith("\"")) val = val.substring(1);
-		if(val.endsWith("\"")) val = val.substring(0, val.length()-1);
+		if(val.endsWith("\"") && val.length() > 2 && ! (val.charAt(val.length()-2) == '\\')) val = val.substring(0, val.length()-1);
 		return val;
     }
 }

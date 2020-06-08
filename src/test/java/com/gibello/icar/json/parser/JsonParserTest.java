@@ -47,4 +47,15 @@ class JsonParserTest {
 			fail(e.getMessage());
 		}
 	}
+	
+	@Test
+	void numericValuesTest() {
+		String json = "{\"startAt\":0,\"maxResults\":0,\"total\":23.08,\"issues\":[1,2,\"3\",4.5]}";
+		try {
+			defaultParse(json);
+		} catch (Exception e) {
+			e.printStackTrace(System.err);
+			fail(e.getMessage());
+		}
+	}
 }

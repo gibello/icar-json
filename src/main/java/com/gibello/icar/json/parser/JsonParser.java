@@ -97,8 +97,8 @@ public class JsonParser {
 					currentValue(c);
 					break;
 				}
-				if(firstval && this.currentValue.length() <= 0) throw new IOException("Unexpected comma at index " + mainIndex + " line " + lineNo);
-				else if((expect & KEY) != 0 && (firstval || this.currentValue.length()>0)) throw new IOException("Unexpected comma at index " + mainIndex + " line " + lineNo);
+				//if(firstval && this.currentValue.length() <= 0) throw new IOException("Unexpected comma at index " + mainIndex + " line " + lineNo);
+				if((expect & KEY) != 0 && (firstval || this.currentValue.length()>0)) throw new IOException("Unexpected comma at index " + mainIndex + " line " + lineNo);
 				else if((expect & VALUE) != 0) {
 					if(! this.quoted) handler.simpleValue(stripQuotes(this.currentValue.toString()));
 				}
@@ -110,7 +110,7 @@ public class JsonParser {
 				firstval = false;
 				break;
 			case ':' :
-				if(((expect & KEY) == 0 && !this.quoted) || this.currentValue.length() <= 0) throw new IOException("Unexpected colon at index " + mainIndex + " line " + lineNo);
+				if(!this.quoted && (((expect & KEY) == 0) || this.currentValue.length() <= 0)) throw new IOException("Unexpected colon at index " + mainIndex + " line " + lineNo);
 				if(! this.quoted) {
 					handler.key(stripQuotes(this.currentValue.toString()));
 					expect = VALUE | OBJECT | ARRAY;

@@ -2,6 +2,8 @@
 
 Designed in a minimalistic way (as little code as possible), with no external dependency, and released under Creative Commons Zero (CC0) "public domain" license.
 
+Can "stream" JSON on the fly: as a push parser, can process a continuous JSON flow as it comes (drawback: can't be used to validate JSON, as it doesn't expect it to be complete).
+
 Fast enough to parse a 50 Mo JSON file in about 3 seconds !
 
 ## Build with maven

@@ -15,11 +15,20 @@ public class JsonParser {
 	int stack[] = new int[512];
 	boolean quoted = false;
 	
+	boolean record;
+	StringBuilder recordBuffer = new StringBuilder();
+	
 	private static final int OBJECT = 1;
 	private static final int ARRAY = 2;
 	private static final int VALUE = 4;
 	private static final int KEY = 8;
 
+	/**
+	 * Parse a JSON input stream, invoking handler callbacks according to parsed tokens.
+	 * @param input The JSON input stream (note: using a buffered stream can dramatically increase speed)
+	 * @param handler A handler to catch tokens
+	 * @throws Exception
+	 */
 	public void parse(InputStream input, EventHandler handler) throws Exception {
 		int expect = OBJECT | ARRAY;
 		int status = 0, mainIndex = 0, lineNo = 1;
@@ -31,6 +40,8 @@ public class JsonParser {
 		PushbackInputStream in = new PushbackInputStream(input);
 		while((c = in.read()) > 0) {
 			mainIndex++;
+			
+			if(record) this.recordBuffer.append((char)c); // Record if requested
 
 			switch((char)c) {
 			case '{' :
@@ -159,6 +170,30 @@ public class JsonParser {
 		
 		handler.endParsing();
 	}
+	
+	/**
+	 * Start recording
+	 */
+	public void startRecording() {
+		this.recordBuffer.setLength(0);
+		this.record = true;
+	}
+	
+	/**
+	 * End recording
+	 * @return The recorded text
+	 */
+	public String endRecording() {
+		this.record = false;
+		return this.recordBuffer.toString();
+	}
+	
+	/**
+	 * Check whether recording is in progress.
+	 * @return true if recording, false otherwise
+	 */
+	public boolean isRecording() { return this.record; }
+
 
 	private int pushStatus(int status) throws IOException {
 		if(this.level >= this.stack.length-1) throw new IOException("Stack overflow");

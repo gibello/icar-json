@@ -6,6 +6,16 @@ Can "stream" JSON on the fly: as a push parser, can process a continuous JSON fl
 
 Fast enough to parse a 50 Mo JSON file in about 3 seconds !
 
+## Maven dependency to include in your pom
+
+```
+<dependency>
+  <groupId>com.gibello</groupId>
+  <artifactId>icar-json</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
+
 ## Build with maven
 
 ```

@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.gibello</groupId>
   <artifactId>icar-json</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1-SNAPSHOT</version>
   <name>ICAR JSON parser</name>
   <description>Minimalistic JSON fast push parser</description>
   <packaging>jar</packaging>
@@ -39,7 +39,7 @@
     <connection>scm:git:ssh://git@github.com/gibello/icar-json.git</connection>
     <developerConnection>scm:git:git@github.com:gibello/icar-json.git</developerConnection>
     <url>https://github.com/gibello/icar-json</url>
-    <tag>icar-json-1.0.0</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <distributionManagement>

@@ -113,4 +113,37 @@ class JsonParserTest {
 			fail(e.getMessage());
 		}
 	}
+	
+	@Test
+	void testEmptyArray() {
+		String json1 = "{\"array\":[]}";
+		String json2 = "{\"array\":[\"\"]}";
+		try {
+			JsonParser parser = new JsonParser();
+			ValueCountHandler handler = new ValueCountHandler(null, System.out);
+			parser.parse(new ByteArrayInputStream(json1.getBytes()), handler);
+			assertEquals(0, handler.getValueCount());
+			// Note: handler not reset (not required as count should be 0)
+			parser.parse(new ByteArrayInputStream(json2.getBytes()), handler);
+			assertEquals(1, handler.getValueCount());
+		} catch (Exception e) {
+			e.printStackTrace(System.err);
+			fail(e.getMessage());
+		}
+	}
+	
+	@Test
+	void bigFileTest() {
+		try {
+			JsonParser parser = new JsonParser();
+			ValueCountHandler handler = new ValueCountHandler(null, System.out);
+			parser.parse(new FileInputStream("src/test/resources/bigfile.json"),
+					handler);
+			//System.out.println("Value count: " + handler.getValueCount());
+			assertEquals(217, handler.getValueCount());
+		} catch (Exception e) {
+			e.printStackTrace(System.err);
+			fail(e.getMessage());
+		}
+	}
 }

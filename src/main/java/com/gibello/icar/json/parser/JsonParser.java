@@ -14,10 +14,14 @@ public class JsonParser {
 	int level = 0;
 	int stack[] = new int[512];
 	boolean quoted = false;
-	
+
+	// Used to distinguish empty value from "no value"
+	// Typically: [ "" ] versus [ ]
+	boolean emptyValue = false;
+
 	boolean record;
 	StringBuilder recordBuffer = new StringBuilder();
-	
+
 	private static final int OBJECT = 1;
 	private static final int ARRAY = 2;
 	private static final int VALUE = 4;
@@ -89,12 +93,14 @@ public class JsonParser {
 				if(this.quoted) {
 					currentValue(c);
 					break;
-				}
-				firstval = false;
+				}	
 				if((expect & VALUE) != 0) {
-					handler.simpleValue(stripQuotes(this.currentValue.toString()));
+					String value = this.currentValue.toString();
+					if(! (firstval && value.isEmpty())) handler.simpleValue(stripQuotes(value));
+					else if(this.emptyValue) handler.simpleValue("");
 					this.currentValue = new StringBuffer();
 				}
+				firstval = false;
 				handler.endArray();
 				
 				status = popStatus();
@@ -159,7 +165,10 @@ public class JsonParser {
 				} else currentValue(c);
 				break;
 			case '\"':
-				if((expect & VALUE) != 0) this.quoted = !this.quoted;
+				if((expect & VALUE) != 0) {
+					this.emptyValue = (this.quoted && this.currentValue.toString().trim().isEmpty());
+					this.quoted = !this.quoted;
+				}
 				break;
 			default :
 				if((expect & (VALUE | KEY)) == 0) throw new IOException("Unexpected character: " + (char)c + " at index " + mainIndex + " line " + lineNo);
@@ -215,6 +224,7 @@ public class JsonParser {
 
 	private String stripQuotes(String val) {
     	//val = val.trim();
+		//if(val.startsWith("\"")) System.out.println("quoted!");
     	if(val.startsWith("\"")) val = val.substring(1);
 		if(val.endsWith("\"") && val.length() > 2 && ! (val.charAt(val.length()-2) == '\\')) val = val.substring(0, val.length()-1);
 		return val;

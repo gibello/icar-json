@@ -8,6 +8,11 @@
   <packaging>jar</packaging>
   <url>https://github.com/gibello/icar-json</url>
 
+  <properties>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
+  </properties>
+
   <organization>
     <name>Pierre-Yves Gibello</name>
     <url>http://www.gibello.com</url>

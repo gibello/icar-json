@@ -2,6 +2,7 @@ package com.gibello.icar.json.parser;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -137,7 +138,8 @@ class JsonParserTest {
 		try {
 			JsonParser parser = new JsonParser();
 			ValueCountHandler handler = new ValueCountHandler(null, System.out);
-			parser.parse(new FileInputStream("src/test/resources/bigfile.json"),
+			parser.parse(new BufferedInputStream(
+					new FileInputStream("src/test/resources/bigfile.json")),
 					handler);
 			//System.out.println("Value count: " + handler.getValueCount());
 			assertEquals(217, handler.getValueCount());

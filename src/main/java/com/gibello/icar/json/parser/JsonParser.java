@@ -85,7 +85,7 @@ public class JsonParser {
 				firstval = true;
 				if((expect & ARRAY) == 0) throw new IOException("Unexpected [ at index " + mainIndex  + " line " + lineNo);
 				handler.startArray();
-				
+
 				status = pushStatus(ARRAY);
 				expect = VALUE | OBJECT | ARRAY;
 				break;
@@ -176,10 +176,10 @@ public class JsonParser {
 				break;
 			}
 		}
-		
+
 		handler.endParsing();
 	}
-	
+
 	/**
 	 * Start recording
 	 */

@@ -56,7 +56,7 @@ class JsonParserTest {
 	 */
 	private void prettyPrintReturn(String json) {
 		try {
-			File prettyJson = File.createTempFile("icar-json", "json");
+			File prettyJson = File.createTempFile("icar-json", ".json");
 			prettyPrintParse(json, new PrintStream(prettyJson));
 			defaultParse(new FileInputStream(prettyJson));
 		} catch (Exception e) {

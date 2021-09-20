@@ -12,7 +12,7 @@ Fast enough to parse a 50 Mo JSON file in about 3 seconds !
 <dependency>
   <groupId>com.gibello</groupId>
   <artifactId>icar-json</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
 </dependency>
 ```
 
@@ -25,7 +25,7 @@ $ mvn clean install
 ## Quick start: pretty-print JSON
 
 ```
-$ java -jar target/icar-json-1.0.0-SNAPSHOT.jar any-json-file.json
+$ java -jar target/icar-json-1.0.2-SNAPSHOT.jar any-json-file.json
 ```
  
 ## How to develop your own parser
